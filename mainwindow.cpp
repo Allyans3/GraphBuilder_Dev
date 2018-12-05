@@ -212,9 +212,6 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->stackedWidget->setCurrentIndex(0);
         ui->stackedHeader->setCurrentIndex(0);
     });
-    connect(ui->check,&QPushButton::clicked,this,[this]{
-        check_mult();
-    });
 }
 
 MainWindow::~MainWindow()
@@ -226,47 +223,52 @@ void MainWindow::check_mult()
 {
     if(scene->nodes.size() == 0)
         return;
-    QList<Node*> visited = check_multigraph(0);
-    QList<Node*> temp;
-    int number=0,cnt=0,check=visited.size();
-//    if(check > 1)
-//        cnt++;
-    if(scene->nodes.size() > visited.size())
+    QList<Node*> nodes_copy = scene->nodes;
+    int count = 0;
+    for(int node = 0;node < nodes_copy.size();node++)
     {
-        while(!(scene->nodes.size() == visited.size()))
+        if(!nodes_copy.at(node)->edges().size())
         {
-            for(int i = 0;i < scene->nodes.size();i++)
+            nodes_copy.removeAt(node);
+            node--;
+            count++;
+        }
+    }
+    ui->label_isol_count->setText(QString::number(count));
+    if(nodes_copy.size() == 0)
+        return;
+    QList<Node*> visited = check_multigraph(0,nodes_copy);
+    QList<Node*> temp;
+    int cnt=1;
+
+    if(nodes_copy.size() > visited.size())
+    {
+        while(!(nodes_copy.size() == visited.size()))
+        {
+            for(int i = 0;i < nodes_copy.size();i++)
             {
-                if(!visited.contains(scene->nodes.at(i)))
+                if(!visited.contains(nodes_copy.at(i)))
                 {
-                    for (int var = 0; var < scene->nodes.at(i)->textContent().length(); ++var)
-                        if (scene->nodes.at(i)->textContent().at(var).isDigit())
-                            number = scene->nodes.at(i)->textContent().at(var).digitValue();
-                    temp = check_multigraph((number-1));
+                    temp = check_multigraph(i,nodes_copy);
                     for(int j=0; j< temp.size(); j++)
                         visited.append(temp.at(j));
                     temp.clear();
-                    if((visited.size() - check) > 1)
-                    {
-                        check = visited.size();
-                        cnt++;
-                    }
+                    cnt++;
                     break;
                 }
             }
         }
     }
-    qDebug() << cnt;
-//    ui->label_ngs_count->setText(QString::number(cnt));
+    ui->label_ngs_count->setText(QString::number(cnt));
 }
 
 
-QList<Node*> MainWindow::check_multigraph(int start)
+QList<Node*> MainWindow::check_multigraph(int start,QList<Node*> nodes_copy)
 {
     QList<Node*> visited;
     QList<Node*> temp;
 
-    temp.append(scene->nodes.at(start));
+    temp.append(nodes_copy.at(start));
 
     while(!temp.isEmpty())
     {
@@ -412,6 +414,7 @@ void MainWindow::editing()
             loop++;
     }
     ui->label_loop->setText(QString("Loops: "+QString::number(loop)));
+    check_mult();
 }
 
 

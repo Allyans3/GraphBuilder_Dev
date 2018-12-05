@@ -1156,35 +1156,6 @@ QPushButton:hover {
        <string>Ctrl+X</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="check">
-      <property name="geometry">
-       <rect>
-        <x>8</x>
-        <y>223</y>
-        <width>75</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>9</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton {
-    border: 0px solid gray;
-    border-radius: 10px;
-    padding: 0 8px;
-    background-color:rgb(0,199,77);
-	color:#ffffff;
-}</string>
-      </property>
-      <property name="text">
-       <string>Check</string>
-      </property>
-     </widget>
      <zorder>node</zorder>
      <zorder>comboBox_2</zorder>
      <zorder>edge</zorder>
@@ -1198,7 +1169,6 @@ QPushButton:hover {
      <zorder>edge_number</zorder>
      <zorder>push_set_text</zorder>
      <zorder>clear</zorder>
-     <zorder>check</zorder>
     </widget>
    </item>
    <item row="2" column="1">
@@ -1652,7 +1622,7 @@ QPushButton:hover {
       <property name="geometry">
        <rect>
         <x>3</x>
-        <y>123</y>
+        <y>144</y>
         <width>83</width>
         <height>21</height>
        </rect>
@@ -1675,7 +1645,7 @@ QPushButton:hover {
       <property name="geometry">
        <rect>
         <x>3</x>
-        <y>100</y>
+        <y>121</y>
         <width>83</width>
         <height>21</height>
        </rect>
@@ -1701,7 +1671,7 @@ QPushButton:hover {
       <property name="geometry">
        <rect>
         <x>3</x>
-        <y>146</y>
+        <y>167</y>
         <width>35</width>
         <height>21</height>
        </rect>
@@ -1724,8 +1694,54 @@ QPushButton:hover {
       <property name="geometry">
        <rect>
         <x>35</x>
-        <y>146</y>
+        <y>167</y>
         <width>50</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of graphs on scene&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_isol">
+      <property name="geometry">
+       <rect>
+        <x>3</x>
+        <y>100</y>
+        <width>61</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of graphs on scene&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>Isolated:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_isol_count">
+      <property name="geometry">
+       <rect>
+        <x>61</x>
+        <y>100</y>
+        <width>21</width>
         <height>21</height>
        </rect>
       </property>
