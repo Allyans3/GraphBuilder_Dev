@@ -44,14 +44,6 @@ void update_temp(QList<Node*> &temp, QList<Node*> &visited, int &lenght, QListWi
 
 void bfs(QList<Node*> nodes,QListWidget *column)
 {
-//    for(int node = 0;node < nodes.size();node++)
-//    {
-//        if(!nodes.at(node)->edges().size())
-//        {
-//            nodes.removeAt(node);
-//            node--;
-//        }
-//    }
     QList<Node*> visited;
     QList<Node*> temp;
     int lenght = -1;

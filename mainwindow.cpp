@@ -213,32 +213,7 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->stackedHeader->setCurrentIndex(0);
     });
     connect(ui->check,&QPushButton::clicked,this,[this]{
-        QSet<Node*> temp;
-        for(int cur=0; cur< scene->nodes.size(); cur++)
-        {
-            for(int i=0; i< scene->nodes.size(); i++)
-            {
-                for(int j=0; j < scene->nodes.at(cur)->edges().size(); j++)
-                {
-                    if(scene->nodes.at(cur)->edges().at(j)->end == scene->nodes.at(cur))
-                    {
-                        if(scene->nodes.at(cur)->edges().at(j)->begin != scene->nodes.at(i))
-                        {
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        if(scene->nodes.at(cur)->edges().at(j)->end != scene->nodes.at(i))
-                        {
-                            break;
-                        }
-                    }
-
-                }
-            }
-
-        }
+        check_mult();
     });
 }
 
@@ -247,9 +222,89 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::check_mult()
+{
+    if(scene->nodes.size() == 0)
+        return;
+    QList<Node*> visited = check_multigraph(0);
+    QList<Node*> temp;
+    int number=0,cnt=0,check=visited.size();
+//    if(check > 1)
+//        cnt++;
+    if(scene->nodes.size() > visited.size())
+    {
+        while(!(scene->nodes.size() == visited.size()))
+        {
+            for(int i = 0;i < scene->nodes.size();i++)
+            {
+                if(!visited.contains(scene->nodes.at(i)))
+                {
+                    for (int var = 0; var < scene->nodes.at(i)->textContent().length(); ++var)
+                        if (scene->nodes.at(i)->textContent().at(var).isDigit())
+                            number = scene->nodes.at(i)->textContent().at(var).digitValue();
+                    temp = check_multigraph((number-1));
+                    for(int j=0; j< temp.size(); j++)
+                        visited.append(temp.at(j));
+                    temp.clear();
+                    if((visited.size() - check) > 1)
+                    {
+                        check = visited.size();
+                        cnt++;
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    qDebug() << cnt;
+//    ui->label_ngs_count->setText(QString::number(cnt));
+}
 
 
+QList<Node*> MainWindow::check_multigraph(int start)
+{
+    QList<Node*> visited;
+    QList<Node*> temp;
 
+    temp.append(scene->nodes.at(start));
+
+    while(!temp.isEmpty())
+    {
+        Edge *cur_edge = nullptr;
+        QSet<Node*> new_temp;
+        for(int i = 0;i < temp.size();i++)
+        {
+            for(int edge = 0;edge < temp.at(i)->edges().size();edge++)
+            {
+                cur_edge = temp.at(i)->edges().at(edge);
+                if(temp.at(i) == cur_edge->end)
+                {
+                    if(!visited.contains(temp.at(i)) && !visited.contains(cur_edge->begin)
+                             && !temp.contains(cur_edge->begin))
+                    {
+                        new_temp.insert(cur_edge->begin);
+                    }
+                }
+                else if(temp.at(i) == cur_edge->begin)
+                {
+                    if(!visited.contains(temp.at(i)) && !visited.contains(cur_edge->end)
+                            && !temp.contains(cur_edge->end))
+                    {
+                        new_temp.insert(cur_edge->end);
+                    }
+                }
+            }
+        }
+
+        for(int i = 0;i < temp.size();i++)
+        {
+            visited.append(temp.at(i));
+        }
+        temp.clear();
+        temp = QList<Node*>::fromSet(new_temp);
+    }
+    return visited;
+}
 
 void MainWindow::dijkstra_func()
 {

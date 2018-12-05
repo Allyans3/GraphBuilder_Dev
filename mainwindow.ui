@@ -1697,6 +1697,52 @@ QPushButton:hover {
        <string>CNN: 0</string>
       </property>
      </widget>
+     <widget class="QLabel" name="label_ngs">
+      <property name="geometry">
+       <rect>
+        <x>3</x>
+        <y>146</y>
+        <width>35</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of graphs on scene&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>NGS:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_ngs_count">
+      <property name="geometry">
+       <rect>
+        <x>35</x>
+        <y>146</y>
+        <width>50</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of graphs on scene&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
     </widget>
    </item>
    <item row="3" column="0" colspan="3">
