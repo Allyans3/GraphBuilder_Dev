@@ -452,7 +452,7 @@ QPushButton:hover {
              <string>Find Dijkstra</string>
             </property>
             <property name="shortcut">
-             <string>F6</string>
+             <string>F7</string>
             </property>
            </widget>
           </item>

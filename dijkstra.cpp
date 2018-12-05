@@ -88,7 +88,8 @@ void dijkstra_steps(QListWidget *list,QTableWidget *matrix,int row,QList<Node*> 
         QListWidgetItem *newitem = new QListWidgetItem(list);
         newitem->setTextAlignment(Qt::AlignCenter);
         newitem->setFont(QFont("Times", 10, QFont::Bold));
-        newitem->setText(QString("Step " + QString::number(row+1) + ". Take the node - " + nodes_copy.at(min_col)->textContent() + " and define the set of subsequent nodes: {" + S + "}. Temporary labels: " + temp + ". Set the node X" + QString::number(const_label-1) + " a constant label " + QString(matrix->item(row,(const_label))->text()) + " as it is minimal."));
+        newitem->setText(QString("Step " + QString::number(row+1) + ". Take the node - " + nodes_copy.at(min_col)->textContent() + " and define the set of subsequent nodes: {" + S + "}. Temporary labels: " +
+                                 temp + ". Set the node X" + QString::number(const_label-1) + " a constant label " + QString(matrix->item(row,(const_label))->text()) + " as it is minimal."));
         list->addItem(newitem);
     }
     else

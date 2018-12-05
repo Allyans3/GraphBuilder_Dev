@@ -213,8 +213,30 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->stackedHeader->setCurrentIndex(0);
     });
     connect(ui->check,&QPushButton::clicked,this,[this]{
-        for(int i=0; i< scene->nodes.size(); i++)
+        QSet<Node*> temp;
+        for(int cur=0; cur< scene->nodes.size(); cur++)
         {
+            for(int i=0; i< scene->nodes.size(); i++)
+            {
+                for(int j=0; j < scene->nodes.at(cur)->edges().size(); j++)
+                {
+                    if(scene->nodes.at(cur)->edges().at(j)->end == scene->nodes.at(cur))
+                    {
+                        if(scene->nodes.at(cur)->edges().at(j)->begin != scene->nodes.at(i))
+                        {
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        if(scene->nodes.at(cur)->edges().at(j)->end != scene->nodes.at(i))
+                        {
+                            break;
+                        }
+                    }
+
+                }
+            }
 
         }
     });
