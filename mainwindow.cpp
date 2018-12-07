@@ -41,6 +41,8 @@ MainWindow::MainWindow(QWidget *parent) :
                 deleteitem();
     });
     connect(ui->build_matrix,&QPushButton::clicked,this,[this]{
+        if(check_nodes("matrixes") > 0)
+            return;
         build_matrixes();
         if(scene->edges.size() >= 1)
             ui->status->setText("Matrixes built.");
@@ -61,6 +63,8 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->status->setText("All cleared.");
     });
     connect(ui->build_eulerian,&QPushButton::clicked,this,[this]{
+        if(check_nodes("eulerian") > 0)
+            return;
         if(graph_direction() == false)
         {
             init_matrixes(ui->matrix_1, ui->matrix_2, this->scene->nodes.size(), this->scene->edges.size());
@@ -77,6 +81,9 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->matrix_2->clear();
     });
     connect(ui->paint_graph,&QPushButton::clicked,this,[this]{
+        ui->undo->click();
+        if(check_nodes("painting") > 0)
+            return;
         if(scene->nodes.size() == 0 || scene->edges.size() == 0)
             return;
         QList<QPair<Node*, QColor>> colorNode = paint_graph(scene->nodes);
@@ -146,6 +153,8 @@ MainWindow::MainWindow(QWidget *parent) :
     });
     connect(ui->build_ostov,&QPushButton::clicked,this,[this]{
         int digit = 0,digit1 = 0;
+        if(check_nodes("ostov") > 0)
+            return;
         for (int var = 0; var < ui->label_loop->text().length(); ++var)
             if (ui->label_loop->text().at(var).isDigit())
                 digit = ui->label_loop->text().at(var).digitValue();
@@ -191,12 +200,16 @@ MainWindow::MainWindow(QWidget *parent) :
         }
     });
     connect(ui->build_bfs,&QPushButton::clicked,this,[this]{
+        if(check_nodes("BFS") > 0)
+            return;
         if (scene->edges.size() >= 1 && scene->nodes.size() >= 1){
             bfs(scene->nodes,ui->listWidget);
             ui->status->setText("BFS completed.");
         }
     });
     connect(ui->build_dfs,&QPushButton::clicked,this,[this]{
+        if(check_nodes("DFS") > 0)
+            return;
         if (scene->edges.size() >= 1 && scene->nodes.size() >= 1){
             dfs(scene->nodes,ui->listWidget);
             ui->status->setText("DFS completed.");
@@ -217,6 +230,24 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+
+int MainWindow::check_nodes(QString text)
+{
+    int n=0;
+    if(ui->label_isol_count->text().toInt() > 0)
+    {
+        ui->status->setText("Error " + text + ". Graph has an isolated node(-s).");
+        n++;
+    }
+    else if(ui->label_ngs_count->text().toInt() > 1)
+    {
+        ui->status->setText("Error " + text + ". Scene has " + QString::number(ui->label_ngs_count->text().toInt()) + " graphs.");
+        n++;
+    }
+    qDebug() << n;
+    return n;
 }
 
 void MainWindow::check_mult()
@@ -313,14 +344,24 @@ void MainWindow::dijkstra_func()
     if(scene->nodes.size() < 2 || scene->edges.size() < 1)
     {
         ui->status->setText("Dijkstra error. To small number of nodes or edges.");
+        ui->stackedHeader->setCurrentIndex(0);
+        ui->stackedWidget->setCurrentIndex(0);
         return;
     }
-    for(int node = 0;node < scene->nodes.size();node++)
-        if(!scene->nodes.at(node)->edges().size())
-        {
-            ui->status->setText("Dijkstra error. Graph has an isolated node(-s).");
-            return;
-        }
+    if(ui->label_isol_count->text().toInt() > 0)
+    {
+        ui->status->setText("Dijkstra error. Graph has an isolated node(-s).");
+        ui->stackedHeader->setCurrentIndex(0);
+        ui->stackedWidget->setCurrentIndex(0);
+        return;
+    }
+    if(ui->label_ngs_count->text().toInt() > 1)
+    {
+        ui->status->setText("Dijkstra error. Scene has " + QString::number(ui->label_ngs_count->text().toInt()) + " graphs.");
+        ui->stackedHeader->setCurrentIndex(0);
+        ui->stackedWidget->setCurrentIndex(0);
+        return;
+    }
     ui->stackedHeader->setCurrentIndex(1);
     ui->stackedWidget->setCurrentIndex(1);
     ui->matrix_3->clear();
@@ -364,7 +405,7 @@ void MainWindow::slotTimer()
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
     timer->start(100);
-    ui->clear_all->move(46,ui->groupBox->height()-33);
+    ui->clear_all->move(53,ui->groupBox->height()-33);
     ui->clear->move(8,ui->groupBox->height()-33);
     QWidget::resizeEvent(event);
 }

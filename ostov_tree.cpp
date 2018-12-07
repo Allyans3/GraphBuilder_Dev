@@ -28,14 +28,6 @@ Edge * nearest_path(QList<Edge *> edges, QList<Node *> temp, QList<Node *> nodes
 
 QList<Edge*> ostov_tree(QList<Node*> nodes, QList<Edge*> edges)
 {
-    for(int node = 0;node < nodes.size();node++)
-    {
-        if(!nodes.at(node)->edges().size())
-        {
-            nodes.removeAt(node);
-            node--;
-        }
-    }
     QList<Edge*> result;
     QList<Node*> temp;
 

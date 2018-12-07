@@ -32,6 +32,7 @@ public:
     void but_node_change();
     QList<Node*> check_multigraph(int start, QList<Node *> nodes_copy);
     void check_mult();
+    int check_nodes(QString text);
 public slots:
     void dijkstra_func();
     void addedge();

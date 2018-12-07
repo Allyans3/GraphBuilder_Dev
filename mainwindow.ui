@@ -792,9 +792,9 @@ QPushButton:hover {
      <widget class="QPushButton" name="clear_all">
       <property name="geometry">
        <rect>
-        <x>46</x>
+        <x>53</x>
         <y>500</y>
-        <width>37</width>
+        <width>30</width>
         <height>25</height>
        </rect>
       </property>
@@ -826,7 +826,7 @@ QPushButton:hover {
 }</string>
       </property>
       <property name="text">
-       <string>r All</string>
+       <string>All</string>
       </property>
       <property name="shortcut">
        <string>C</string>
@@ -1119,7 +1119,7 @@ QPushButton:hover {
        <rect>
         <x>8</x>
         <y>500</y>
-        <width>38</width>
+        <width>45</width>
         <height>25</height>
        </rect>
       </property>
@@ -1150,7 +1150,7 @@ QPushButton:hover {
 }</string>
       </property>
       <property name="text">
-       <string>Clea</string>
+       <string>Clear</string>
       </property>
       <property name="shortcut">
        <string>Ctrl+X</string>
@@ -1467,6 +1467,9 @@ QPushButton:hover {
          </property>
          <property name="horizontalScrollBarPolicy">
           <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="autoScrollMargin">
+          <number>16</number>
          </property>
          <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>

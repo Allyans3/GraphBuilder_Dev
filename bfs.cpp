@@ -88,14 +88,6 @@ Node* update_dfs(QList<Node*> &visited, QList<Node*> &nodes)
 
 void dfs(QList<Node*> nodes,QListWidget *column)
 {
-    for(int node = 0;node < nodes.size();node++)
-    {
-        if(!nodes.at(node)->edges().size())
-        {
-            nodes.removeAt(node);
-            node--;
-        }
-    }
     QList<Node*> visited;
 
     visited.append(nodes.first());
