@@ -33,10 +33,10 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <property name="topMargin">
-    <number>6</number>
+    <number>7</number>
    </property>
    <property name="bottomMargin">
-    <number>6</number>
+    <number>7</number>
    </property>
    <item row="1" column="0" colspan="3">
     <widget class="QGroupBox" name="groupBox_2">
@@ -1196,6 +1196,19 @@ QPushButton:hover {
        <property name="bottomMargin">
         <number>0</number>
        </property>
+       <item row="0" column="0" rowspan="2">
+        <widget class="GraphScene" name="graph">
+         <property name="styleSheet">
+          <string notr="true">QGraphicsView {
+    border-radius: 10px;
+	border-color: black;
+    padding: 2 2px;
+    background: rgb(46,53,61);
+	color:rgb(255,255,255);
+}</string>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="1" rowspan="2">
         <widget class="QListWidget" name="listWidget">
          <property name="minimumSize">
@@ -1234,111 +1247,224 @@ QPushButton:hover {
         </widget>
        </item>
        <item row="0" column="2">
-        <widget class="QTableWidget" name="matrix_1">
+        <widget class="QGroupBox" name="groupBox_4">
          <property name="minimumSize">
           <size>
            <width>380</width>
            <height>243</height>
           </size>
          </property>
-         <property name="maximumSize">
-          <size>
-           <width>10000</width>
-           <height>10000</height>
-          </size>
-         </property>
-         <property name="mouseTracking">
-          <bool>true</bool>
-         </property>
-         <property name="tabletTracking">
-          <bool>false</bool>
-         </property>
          <property name="styleSheet">
-          <string notr="true">QTableWidget {
+          <string notr="true">QGroupBox {
     border-radius: 10px;
 	border-color: black;
     padding: 2 2px;
     background: rgb(46,53,61);
 	color:rgb(255,255,255);
+}</string>
+         </property>
+         <property name="title">
+          <string/>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <property name="spacing">
+           <number>3</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>3</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="label_matrix_1">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color:white;
+background: rgb(46,53,61);</string>
+            </property>
+            <property name="text">
+             <string>Adjacency matrix</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTableWidget" name="matrix_1">
+            <property name="minimumSize">
+             <size>
+              <width>380</width>
+              <height>223</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>10000</width>
+              <height>10000</height>
+             </size>
+            </property>
+            <property name="mouseTracking">
+             <bool>true</bool>
+            </property>
+            <property name="tabletTracking">
+             <bool>false</bool>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QTableWidget {
+	border-radius: 1px;
+	border-color: black;
+    padding: 2 2px;
+    background: rgb(46,53,61);
+	background-color: rgb(46,53,61);
+	color:rgb(255,255,255);
     gridline-color: white;
 }
 </string>
-         </property>
-         <property name="verticalScrollBarPolicy">
-          <enum>Qt::ScrollBarAlwaysOff</enum>
-         </property>
-         <property name="horizontalScrollBarPolicy">
-          <enum>Qt::ScrollBarAlwaysOff</enum>
-         </property>
-         <property name="sizeAdjustPolicy">
-          <enum>QAbstractScrollArea::AdjustIgnored</enum>
-         </property>
-         <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
-         </property>
-         <property name="selectionMode">
-          <enum>QAbstractItemView::NoSelection</enum>
-         </property>
-         <property name="textElideMode">
-          <enum>Qt::ElideMiddle</enum>
-         </property>
-         <property name="gridStyle">
-          <enum>Qt::SolidLine</enum>
-         </property>
-         <property name="cornerButtonEnabled">
-          <bool>false</bool>
-         </property>
+            </property>
+            <property name="verticalScrollBarPolicy">
+             <enum>Qt::ScrollBarAlwaysOff</enum>
+            </property>
+            <property name="horizontalScrollBarPolicy">
+             <enum>Qt::ScrollBarAlwaysOff</enum>
+            </property>
+            <property name="sizeAdjustPolicy">
+             <enum>QAbstractScrollArea::AdjustIgnored</enum>
+            </property>
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::NoSelection</enum>
+            </property>
+            <property name="textElideMode">
+             <enum>Qt::ElideMiddle</enum>
+            </property>
+            <property name="gridStyle">
+             <enum>Qt::SolidLine</enum>
+            </property>
+            <property name="cornerButtonEnabled">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item row="1" column="2">
-        <widget class="QTableWidget" name="matrix_2">
+        <widget class="QGroupBox" name="groupBox_5">
          <property name="minimumSize">
           <size>
            <width>380</width>
            <height>243</height>
           </size>
          </property>
-         <property name="mouseTracking">
-          <bool>true</bool>
-         </property>
-         <property name="tabletTracking">
-          <bool>false</bool>
-         </property>
          <property name="styleSheet">
-          <string notr="true">QTableWidget {
+          <string notr="true">QGroupBox {
     border-radius: 10px;
+	border-color: black;
+    padding: 2 2px;
+    background: rgb(46,53,61);
+	color:rgb(255,255,255);
+}</string>
+         </property>
+         <property name="title">
+          <string/>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <property name="spacing">
+           <number>3</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>3</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="label_matrix_2">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color: white;
+background: rgb(46,53,61);</string>
+            </property>
+            <property name="text">
+             <string>Incidence matrix</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTableWidget" name="matrix_2">
+            <property name="minimumSize">
+             <size>
+              <width>380</width>
+              <height>223</height>
+             </size>
+            </property>
+            <property name="mouseTracking">
+             <bool>true</bool>
+            </property>
+            <property name="tabletTracking">
+             <bool>false</bool>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QTableWidget {
+	border-radius:1px;
 	border-color: black;
     padding: 2 2px;
     background: rgb(46,53,61);
 	color:rgb(255,255,255);
 	gridline-color: white;
 }</string>
-         </property>
-         <property name="verticalScrollBarPolicy">
-          <enum>Qt::ScrollBarAlwaysOff</enum>
-         </property>
-         <property name="horizontalScrollBarPolicy">
-          <enum>Qt::ScrollBarAlwaysOff</enum>
-         </property>
-         <property name="selectionMode">
-          <enum>QAbstractItemView::ContiguousSelection</enum>
-         </property>
-         <property name="cornerButtonEnabled">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0" rowspan="2">
-        <widget class="GraphScene" name="graph">
-         <property name="styleSheet">
-          <string notr="true">QGraphicsView {
-    border-radius: 10px;
-	border-color: black;
-    padding: 2 2px;
-    background: rgb(46,53,61);
-	color:rgb(255,255,255);
-}</string>
-         </property>
+            </property>
+            <property name="verticalScrollBarPolicy">
+             <enum>Qt::ScrollBarAlwaysOff</enum>
+            </property>
+            <property name="horizontalScrollBarPolicy">
+             <enum>Qt::ScrollBarAlwaysOff</enum>
+            </property>
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::NoSelection</enum>
+            </property>
+            <property name="textElideMode">
+             <enum>Qt::ElideMiddle</enum>
+            </property>
+            <property name="cornerButtonEnabled">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>

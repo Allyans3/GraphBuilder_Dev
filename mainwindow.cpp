@@ -40,9 +40,28 @@ MainWindow::MainWindow(QWidget *parent) :
             for(int i=scene->selectedItems().size(); i>=0; i--)
                 deleteitem();
     });
+    connect(ui->comboBox_3,&QComboBox::currentTextChanged,this,[this]{
+        if(ui->comboBox_3->currentIndex() == 0)
+        {
+            if(ui->matrix_1->columnCount() > 0)
+                ui->build_matrix->click();
+            ui->label_matrix_1->setText("Adjacency matrix");
+            ui->label_matrix_2->setText("Incidence matrix");
+        }
+        else
+        {
+            if(ui->matrix_1->columnCount() > 0)
+                ui->build_matrix->click();
+            ui->label_matrix_1->setText("Incidence matrix");
+            ui->label_matrix_2->setText("Adjacency matrix");
+        }
+    });
     connect(ui->build_matrix,&QPushButton::clicked,this,[this]{
-        if(check_nodes("matrixes") > 0)
+        if(ui->label_ngs_count->text().toInt() > 1)
+        {
+            ui->status->setText("Error matrixes. Scene has " + QString::number(ui->label_ngs_count->text().toInt()) + " graphs.");
             return;
+        }
         build_matrixes();
         if(scene->edges.size() >= 1)
             ui->status->setText("Matrixes built.");
@@ -81,45 +100,7 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->matrix_2->clear();
     });
     connect(ui->paint_graph,&QPushButton::clicked,this,[this]{
-        ui->undo->click();
-        if(check_nodes("painting") > 0)
-            return;
-        if(scene->nodes.size() == 0 || scene->edges.size() == 0)
-            return;
-        QList<QPair<Node*, QColor>> colorNode = paint_graph(scene->nodes);
-        QList<QPair<Edge*, QColor>> colorEdge = paint_edges(scene->edges);
-        QEventLoop loop;
-        QColor colorN = colorNode.at(0).second;
-        QColor colorE = colorEdge.at(0).second;
-        int colorN1 = 1, colorE1 = 1;
-
-        for(int i=0; i<colorNode.size(); i++)
-        {
-            QTimer::singleShot(70,&loop,SLOT(quit()));
-            loop.exec();
-            colorNode.at(i).first->setBrush(colorNode.at(i).second);
-
-            if(colorN != colorNode.at(i).second)
-            {
-                colorN = colorNode.at(i).second;
-                colorN1++;
-            }
-        }
-        for(int j=0; j<colorEdge.size(); j++)
-        {
-            QTimer::singleShot(70,&loop,SLOT(quit()));
-            loop.exec();
-            colorEdge.at(j).first->setPen(colorEdge.at(j).second);
-
-            if(colorE != colorEdge.at(j).second)
-            {
-                colorE = colorEdge.at(j).second;
-                colorE1++;
-            }
-        }
-        ui->label_cnn->setText(QString("CNN: "+QString::number(colorN1)));
-        ui->label_cen->setText(QString("CEN: "+QString::number(colorE1)));
-        ui->status->setText("Graph painted.");
+        paint_graph_ui();
     });
     connect(ui->undo,&QPushButton::clicked,this,[this]{
         for(int i=0; i<this->scene->nodes.size(); i++)
@@ -152,35 +133,7 @@ MainWindow::MainWindow(QWidget *parent) :
         }
     });
     connect(ui->build_ostov,&QPushButton::clicked,this,[this]{
-        int digit = 0,digit1 = 0;
-        if(check_nodes("ostov") > 0)
-            return;
-        for (int var = 0; var < ui->label_loop->text().length(); ++var)
-            if (ui->label_loop->text().at(var).isDigit())
-                digit = ui->label_loop->text().at(var).digitValue();
-        for (int var = 0; var < ui->label_parallel->text().length(); ++var)
-            if (ui->label_parallel->text().at(var).isDigit())
-                digit1 = ui->label_parallel->text().at(var).digitValue();
-        if(scene->nodes.size() == 0 || scene->edges.size() == 0 || digit >=1 || digit1 >=1)
-            return;
-        QList<Edge*> path = ostov_tree(scene->nodes,scene->edges);
-        if(path.isEmpty())
-        {
-            ui->status->setText("Error ostov.");
-            return;
-        }
-        if(path.size() == scene->edges.size())
-            ui->status->setText("No need to build an ostov tree.");
-        else
-            ui->status->setText("Ostov built.");
-        for(int i=scene->edges.size()-1;i >= 0; i--)
-        {
-            if(!path.contains(scene->edges.at(i)))
-            {
-                scene->edges.at(i)->setSelected(true);
-                deleteitem();
-            }
-        }
+        build_ostov();
     });
     connect(ui->push_set_text,&QPushButton::clicked,this,[this]{
         if (scene->selectedItems().size() > 0)
@@ -246,7 +199,6 @@ int MainWindow::check_nodes(QString text)
         ui->status->setText("Error " + text + ". Scene has " + QString::number(ui->label_ngs_count->text().toInt()) + " graphs.");
         n++;
     }
-    qDebug() << n;
     return n;
 }
 
@@ -423,6 +375,82 @@ void MainWindow::but_node_change()
         scene->v = 0;
         ui->node->setStyleSheet("background-color:rgb(0,199,77);padding: 0 8px;border: 0px solid gray;border-radius: 10px;color:#ffffff;");
         ui->status->setText("Node mode OFF.");
+    }
+}
+
+void MainWindow::paint_graph_ui()
+{
+    ui->undo->click();
+    if(check_nodes("painting") > 0)
+        return;
+    if(scene->nodes.size() == 0 || scene->edges.size() == 0)
+        return;
+    QList<QPair<Node*, QColor>> colorNode = paint_graph(scene->nodes);
+    QList<QPair<Edge*, QColor>> colorEdge = paint_edges(scene->edges);
+    QEventLoop loop;
+    QColor colorN = colorNode.at(0).second;
+    QColor colorE = colorEdge.at(0).second;
+    int colorN1 = 1, colorE1 = 1;
+
+    for(int i=0; i<colorNode.size(); i++)
+    {
+        QTimer::singleShot(70,&loop,SLOT(quit()));
+        loop.exec();
+        colorNode.at(i).first->setBrush(colorNode.at(i).second);
+
+        if(colorN != colorNode.at(i).second)
+        {
+            colorN = colorNode.at(i).second;
+            colorN1++;
+        }
+    }
+    for(int j=0; j<colorEdge.size(); j++)
+    {
+        QTimer::singleShot(70,&loop,SLOT(quit()));
+        loop.exec();
+        colorEdge.at(j).first->setPen(colorEdge.at(j).second);
+
+        if(colorE != colorEdge.at(j).second)
+        {
+            colorE = colorEdge.at(j).second;
+            colorE1++;
+        }
+    }
+    ui->label_cnn->setText(QString("CNN: "+QString::number(colorN1)));
+    ui->label_cen->setText(QString("CEN: "+QString::number(colorE1)));
+    ui->status->setText("Graph painted.");
+}
+
+void MainWindow::build_ostov()
+{
+    int digit = 0,digit1 = 0;
+    if(check_nodes("ostov") > 0)
+        return;
+    for (int var = 0; var < ui->label_loop->text().length(); ++var)
+        if (ui->label_loop->text().at(var).isDigit())
+            digit = ui->label_loop->text().at(var).digitValue();
+    for (int var = 0; var < ui->label_parallel->text().length(); ++var)
+        if (ui->label_parallel->text().at(var).isDigit())
+            digit1 = ui->label_parallel->text().at(var).digitValue();
+    if(scene->nodes.size() == 0 || scene->edges.size() == 0 || digit >=1 || digit1 >=1)
+        return;
+    QList<Edge*> path = ostov_tree(scene->nodes,scene->edges);
+    if(path.isEmpty())
+    {
+        ui->status->setText("Error ostov.");
+        return;
+    }
+    if(path.size() == scene->edges.size())
+        ui->status->setText("No need to build an ostov tree.");
+    else
+        ui->status->setText("Ostov built.");
+    for(int i=scene->edges.size()-1;i >= 0; i--)
+    {
+        if(!path.contains(scene->edges.at(i)))
+        {
+            scene->edges.at(i)->setSelected(true);
+            deleteitem();
+        }
     }
 }
 

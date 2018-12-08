@@ -14,6 +14,7 @@
 #include "graphscene.h"
 #include "dijkstra.h"
 #include <QGraphicsColorizeEffect>
+#include <QComboBox>
 
 namespace Ui {
 class MainWindow;
@@ -33,6 +34,8 @@ public:
     QList<Node*> check_multigraph(int start, QList<Node *> nodes_copy);
     void check_mult();
     int check_nodes(QString text);
+    void build_ostov();
+    void paint_graph_ui();
 public slots:
     void dijkstra_func();
     void addedge();
