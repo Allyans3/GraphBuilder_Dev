@@ -100,7 +100,10 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->matrix_2->clear();
     });
     connect(ui->paint_graph,&QPushButton::clicked,this,[this]{
-        paint_graph_ui();
+        if(graph_direction() == false)
+            paint_graph_ui();
+        else
+            ui->status->setText("Error! Graph is directed.");
     });
     connect(ui->undo,&QPushButton::clicked,this,[this]{
         for(int i=0; i<this->scene->nodes.size(); i++)
@@ -133,7 +136,25 @@ MainWindow::MainWindow(QWidget *parent) :
         }
     });
     connect(ui->build_ostov,&QPushButton::clicked,this,[this]{
-        build_ostov();
+        if(graph_direction() == false)
+        {
+            for(int i=0; i<scene->edges.size(); i++)
+            {
+                if(scene->edges.at(i)->textEdge == "")
+                {
+                    ui->status->setText("Error! One of the edges has no weight.");
+                    return;
+                }
+                else if(scene->edges.at(i)->textEdge == "0")
+                {
+                    ui->status->setText("Error! One of the edges has weight '0'.");
+                    return;
+                }
+            }
+            build_ostov();
+        }
+        else
+            ui->status->setText("Error! Graph is directed.");
     });
     connect(ui->push_set_text,&QPushButton::clicked,this,[this]{
         if (scene->selectedItems().size() > 0)
@@ -155,24 +176,70 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->build_bfs,&QPushButton::clicked,this,[this]{
         if(check_nodes("BFS") > 0)
             return;
-        if (scene->edges.size() >= 1 && scene->nodes.size() >= 1){
-            bfs(scene->nodes,ui->listWidget);
-            ui->status->setText("BFS completed.");
+        if(graph_direction() == false)
+        {
+            if (scene->edges.size() >= 1 && scene->nodes.size() >= 1){
+                bfs(scene->nodes,ui->listWidget);
+                ui->status->setText("BFS completed.");
+            }
         }
+        else
+            ui->status->setText("Error! Graph is directed.");
     });
     connect(ui->build_dfs,&QPushButton::clicked,this,[this]{
         if(check_nodes("DFS") > 0)
             return;
-        if (scene->edges.size() >= 1 && scene->nodes.size() >= 1){
-            dfs(scene->nodes,ui->listWidget);
-            ui->status->setText("DFS completed.");
+        if(graph_direction() == false)
+        {
+            if (scene->edges.size() >= 1 && scene->nodes.size() >= 1){
+                dfs(scene->nodes,ui->listWidget);
+                ui->status->setText("DFS completed.");
+            }
         }
+        else
+            ui->status->setText("Error! Graph is directed.");
     });
     connect(ui->find_dijkstra,&QPushButton::clicked,this,[this]{
-        dijkstra_func();
+        if(graph_direction() == true)
+        {
+            for(int i=0; i<scene->edges.size(); i++)
+            {
+                if(scene->edges.at(i)->textEdge == "")
+                {
+                    ui->status->setText("Error! One of the edges has no weight.");
+                    return;
+                }
+                else if(scene->edges.at(i)->textEdge == "0")
+                {
+                    ui->status->setText("Error! One of the edges has weight '0'.");
+                    return;
+                }
+            }
+            dijkstra_func();
+        }
+        else
+            ui->status->setText("Error! Graph is undirected.");
     });
     connect(ui->find_dijkstra_2,&QPushButton::clicked,this,[this]{
-        dijkstra_func();
+        if(graph_direction() == true)
+        {
+            for(int i=0; i<scene->edges.size(); i++)
+            {
+                if(scene->edges.at(i)->textEdge == "")
+                {
+                    ui->status->setText("Error! One of the edges has no weight.");
+                    return;
+                }
+                else if(scene->edges.at(i)->textEdge == "0")
+                {
+                    ui->status->setText("Error! One of the edges has weight '0'.");
+                    return;
+                }
+            }
+            dijkstra_func();
+        }
+        else
+            ui->status->setText("Error! Graph is undirected.");
     });
     connect(ui->back,&QPushButton::clicked,this,[this]{
         ui->stackedWidget->setCurrentIndex(0);
@@ -424,6 +491,7 @@ void MainWindow::paint_graph_ui()
 void MainWindow::build_ostov()
 {
     int digit = 0,digit1 = 0;
+
     if(check_nodes("ostov") > 0)
         return;
     for (int var = 0; var < ui->label_loop->text().length(); ++var)
@@ -434,6 +502,8 @@ void MainWindow::build_ostov()
             digit1 = ui->label_parallel->text().at(var).digitValue();
     if(scene->nodes.size() == 0 || scene->edges.size() == 0 || digit >=1 || digit1 >=1)
         return;
+
+
     QList<Edge*> path = ostov_tree(scene->nodes,scene->edges);
     if(path.isEmpty())
     {
