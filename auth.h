@@ -10,6 +10,9 @@
 #include <QDebug>
 #include <QTimer>
 #include <QTime>
+#include <QRegExpValidator>
+#include <QRegExp>
+
 
 namespace Ui {
 class Auth;

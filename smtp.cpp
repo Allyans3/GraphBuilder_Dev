@@ -28,8 +28,6 @@ Smtp::Smtp( const QString &user, const QString &pass, const QString &host, int p
     this->host = host;
     this->port = port;
     this->timeout = timeout;
-
-
 }
 
 void Smtp::sendMail(const QString &from, const QString &to, const QString &subject, const QString &body)
@@ -49,9 +47,6 @@ void Smtp::sendMail(const QString &from, const QString &to, const QString &subje
      }
 
     t = new QTextStream( socket );
-
-
-
 }
 
 Smtp::~Smtp()
@@ -72,7 +67,6 @@ void Smtp::errorReceived(QAbstractSocket::SocketError socketError)
 
 void Smtp::disconnected()
 {
-
     qDebug() <<"disconneted";
     qDebug() << "error "  << socket->errorString();
 }

@@ -14,18 +14,41 @@ Auth::Auth(QWidget *parent) :
     });
     this->setWindowIcon(QIcon(":/new/prefix1/logo/logo.ico"));
 
+    QRegExp re("[\\S]{0,}");
+    QRegExp email("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$");
+    ui->login_reg->setValidator(new QRegExpValidator(re, this));
+    ui->pass_reg->setValidator(new QRegExpValidator(re, this));
+    ui->confirm_pass_reg_2->setValidator(new QRegExpValidator(re, this));
+    ui->e_mail_reg->setValidator(new QRegExpValidator(email, this));
+
+
+
     connect(ui->sign_up,&QPushButton::clicked,this,[this]{
         ui->stackedWidget->setCurrentIndex(2);
         if(!db.isOpen())
             slotTimer();
     });
+    connect(ui->confirm_pass_reg_2,&QLineEdit::textChanged,this,[this]{
+        if(ui->confirm_pass_reg_2->text().size() == 0)
+            ui->pass_correcting->setText("");
+        else if(ui->pass_reg->text() != ui->confirm_pass_reg_2->text())
+            ui->pass_correcting->setText("Incorrect");
+        else
+            ui->pass_correcting->setText("Correct");
+    });
+
 
     db = QSqlDatabase::addDatabase("QMYSQL");
-    db.setHostName("remotemysql.com");
-    db.setDatabaseName("ChL2NiO4hE");
+    db.setHostName("db4free.net");
+    db.setDatabaseName("graphauth");
     db.setPort(3306);
-    db.setUserName("ChL2NiO4hE");
-    db.setPassword("WSooj0h6o1");
+    db.setUserName("allyans");
+    db.setPassword("12345678");
+//    db.setHostName("remotemysql.com");
+//    db.setDatabaseName("ChL2NiO4hE");
+//    db.setPort(3306);
+//    db.setUserName("ChL2NiO4hE");
+//    db.setPassword("WSooj0h6o1");
     db.setConnectOptions("MYSQL_OPT_RECONNECT=TRUE;MYSQL_OPT_CONNECT_TIMEOUT=1;MYSQL_OPT_WRITE_TIMEOUT=1;MYSQL_OPT_READ_TIMEOUT=1");
     timer = new QTimer();
     connect(timer, &QTimer::timeout, this, &Auth::slotTimer);
@@ -83,6 +106,7 @@ void Auth::on_register_button_clicked()
     if(!db.isOpen())
         slotTimer();
     QSqlQuery qry;
+    QRegExp email("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$");
     int p1=0,p2=0,p3=0,p4=0;
     QTime midnight(0,0,0);
     qsrand(midnight.secsTo(QTime::currentTime())+qrand());
@@ -90,12 +114,29 @@ void Auth::on_register_button_clicked()
     {
         if(qry.next())
             ui->status_db->setText("This login is already used!");
+        else if(ui->login_reg->text().size() < 6)
+            ui->status_db->setText("Login has less than 6 characters.");
+        else if(ui->pass_reg->text().size() < 8)
+            ui->status_db->setText("Password has less than 8 characters.");
+        else if(ui->pass_reg->text() != ui->confirm_pass_reg_2->text())
+        {
+            if(ui->confirm_pass_reg_2->text().size() == 0)
+                ui->status_db->setText("Enter confirmation password.");
+            else
+                ui->status_db->setText("Incorrect verification password.");
+        }
         else
         {
             if(qry.exec("SELECT E_mail FROM graphauth WHERE E_mail=\'" + ui->e_mail_reg->text() +"\'"))
             {
                 if(qry.next())
                     ui->status_db->setText("This e-mail is already used!");
+                else if(ui->e_mail_reg->text().size() == 0)
+                    ui->status_db->setText("Please enter your e-mail address.");
+                else if(!email.exactMatch(ui->e_mail_reg->text()))
+                    ui->status_db->setText("Incorrect e-mail address format.");
+                else if(!ui->reg_chech_human->isChecked())
+                    ui->status_db->setText("Confirm that you are human.");
                 else
                 {
                     p1 = qrand()%8999 +1001;
@@ -106,7 +147,7 @@ void Auth::on_register_button_clicked()
                                 "','" +QString(QString::number(p1)+"-"+QString::number(p2)+"-"+QString::number(p3)+"-"+QString::number(p4))+"','30')"))
                     {
                         smtp = new Smtp("graphauth@gmail.com", "ppwnccfozhahrjmj", "smtp.gmail.com");
-                        smtp->sendMail("graphauth@gmail.com", QString(ui->e_mail_reg->text()) , "Successful registration",QString("This is your login information.\r\nLogin: " + ui->login_reg->text()+ "\r\nPassword: " + ui->pass_reg->text() + "\r\n"));
+                        smtp->sendMail("graphauth@gmail.com", QString(ui->e_mail_reg->text()) , "Successful registration",QString("This is your login information.\r\nLogin: " + ui->login_reg->text()+ "\r\nPassword: " + ui->pass_reg->text() + "\r\nAuthKey: " + QString(QString::number(p1)+"-"+QString::number(p2)+"-"+QString::number(p3)+"-"+QString::number(p4)) + "\r\r"));
                         ui->status_db->setText("You have successfully signed up!");
                         ui->login->setText(QString(ui->login_reg->text()));
                         ui->stackedWidget->setCurrentIndex(0);
