@@ -16,10 +16,14 @@ Auth::Auth(QWidget *parent) :
 
     QRegExp re("[\\S]{0,}");
     QRegExp email("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$");
+    QRegExp auth("[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}");
+    ui->login->setValidator(new QRegExpValidator(re, this));
+    ui->pass->setValidator(new QRegExpValidator(re, this));
     ui->login_reg->setValidator(new QRegExpValidator(re, this));
     ui->pass_reg->setValidator(new QRegExpValidator(re, this));
     ui->confirm_pass_reg_2->setValidator(new QRegExpValidator(re, this));
     ui->e_mail_reg->setValidator(new QRegExpValidator(email, this));
+    ui->auth_line->setValidator(new QRegExpValidator(auth, this));
 
 
 
@@ -91,8 +95,12 @@ void Auth::on_sign_in_clicked()
                 }
                 else
                 {
+                    if(qry.exec("SELECT Login, Activation FROM graphauth WHERE Login=\'" + ui->login->text() + "\'"))
+                        if(qry.next())
+                            ui->left_entries->setText("You have "+ QString::number(qry.value("Activation").toInt()) + " entries left");
                     ui->status_db->setText("Need activation!");
                     ui->stackedWidget->setCurrentIndex(1);
+
                 }
             }
         }
