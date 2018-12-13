@@ -39,12 +39,15 @@ private slots:
     void on_cont_demo_clicked();
     void on_register_button_clicked();
 
+    void on_button_lost_pass_clicked();
+
 private:
     Ui::Auth *ui;
     QSqlDatabase db;
     MainWindow* form;
     QTimer *timer;
     Smtp *smtp;
+    int code;
 };
 
 #endif // AUTH_H

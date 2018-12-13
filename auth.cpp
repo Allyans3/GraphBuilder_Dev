@@ -17,6 +17,7 @@ Auth::Auth(QWidget *parent) :
     QRegExp re("[\\S]{0,}");
     QRegExp email("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$");
     QRegExp auth("[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}");
+    QRegExp auth2("[0-9]{4}");
     ui->login->setValidator(new QRegExpValidator(re, this));
     ui->pass->setValidator(new QRegExpValidator(re, this));
     ui->login_reg->setValidator(new QRegExpValidator(re, this));
@@ -24,6 +25,10 @@ Auth::Auth(QWidget *parent) :
     ui->confirm_pass_reg_2->setValidator(new QRegExpValidator(re, this));
     ui->e_mail_reg->setValidator(new QRegExpValidator(email, this));
     ui->auth_line->setValidator(new QRegExpValidator(auth, this));
+    ui->e_mail_lost_pass->setValidator(new QRegExpValidator(email, this));
+    ui->code_rec->setValidator(new QRegExpValidator(auth2, this));
+    ui->pass_rec->setValidator(new QRegExpValidator(re, this));
+    ui->pass_conf_rec->setValidator(new QRegExpValidator(re, this));
 
 
 
@@ -39,6 +44,36 @@ Auth::Auth(QWidget *parent) :
             ui->pass_correcting->setText("Incorrect");
         else
             ui->pass_correcting->setText("Correct");
+    });
+    connect(ui->pass_conf_rec,&QLineEdit::textChanged,this,[this]{
+        if(ui->pass_conf_rec->text().size() == 0)
+            ui->pass_correcting_2->setText("");
+        else if(ui->pass_rec->text() != ui->pass_conf_rec->text())
+            ui->pass_correcting_2->setText("Incorrect");
+        else
+            ui->pass_correcting_2->setText("Correct");
+    });
+    connect(ui->link_pass,&QPushButton::clicked,this,[this]{
+        ui->stackedWidget->setCurrentIndex(3);
+        if(!db.isOpen())
+            slotTimer();
+        ui->email_correcting->setText("");
+        ui->code_correcting->setText("");
+        ui->pass_correcting_2->setText("");
+        ui->e_mail_lost_pass->clear();
+        ui->code_rec->clear();
+        ui->pass_rec->clear();
+        ui->pass_conf_rec->clear();
+        ui->label_code->setVisible(false);
+        ui->code_rec->setVisible(false);
+        ui->code_correcting->setVisible(false);
+        ui->label_pass_rec->setVisible(false);
+        ui->pass_rec->setVisible(false);
+        ui->label_min_8->setVisible(false);
+        ui->label_pass_conf_rec->setVisible(false);
+        ui->pass_conf_rec->setVisible(false);
+        ui->pass_correcting_2->setVisible(false);
+        ui->button_lost_pass->setText("Send");
     });
 
 
@@ -206,6 +241,58 @@ void Auth::on_cont_demo_clicked()
     }
 }
 
+void Auth::on_button_lost_pass_clicked()
+{
+    if(!db.isOpen())
+        slotTimer();
+    QSqlQuery qry;
+    QTime midnight(0,0,0);
+    qsrand(midnight.secsTo(QTime::currentTime())+qrand());
+    if(ui->pass_rec->isVisible())
+    {
+        if(ui->pass_rec->text().size() < 8)
+            ui->status_db->setText("Password has less than 8 characters.");
+        else if(qry.exec("UPDATE graphauth SET Password=\'" + ui->pass_rec->text() + "\' WHERE E_mail=\'" + ui->e_mail_lost_pass->text() + "\'"))
+        {
+            ui->status_db->setText("Password successfully recovered.");
+            ui->stackedWidget->setCurrentIndex(0);
+        }
+    }
+    else if(ui->code_rec->isVisible())
+    {
+        if(ui->code_rec->text().toInt() == code)
+        {
+            ui->code_correcting->setText("Correct");
+            ui->label_pass_rec->setVisible(true);
+            ui->pass_rec->setVisible(true);
+            ui->label_min_8->setVisible(true);
+            ui->label_pass_conf_rec->setVisible(true);
+            ui->pass_conf_rec->setVisible(true);
+            ui->pass_correcting_2->setVisible(true);
+            ui->button_lost_pass->setText("Recover");
+        }
+        else
+            ui->code_correcting->setText("Incorrect");
+    }
+    else if(qry.exec("SELECT Login FROM graphauth WHERE E_mail=\'" + ui->e_mail_lost_pass->text() + "\'"))
+    {
+        if(qry.next())
+        {
+            QString login = QString(qry.value("Login").toString());
+            code = qrand()%8999 +1001;
+            smtp = new Smtp("graphauth@gmail.com", "ppwnccfozhahrjmj", "smtp.gmail.com");
+            smtp->sendMail("graphauth@gmail.com", QString(ui->e_mail_lost_pass->text()) , "Password recovery",QString("Dear " + login + ",\r  You received this email while trying to reset your password.\r  This is your verification code: " + QString::number(code) + "\r\rIf you did not request a password reset for your account no further action is required and you can safely disregard this message."));
+            ui->email_correcting->setText("Email Sent");
+            ui->label_code->setVisible(true);
+            ui->code_rec->setVisible(true);
+            ui->code_correcting->setVisible(true);
+            ui->button_lost_pass->setText("Continue");
+        }
+        else
+            ui->email_correcting->setText("Please enter your e-mail address");
+    }
+}
+
 void Auth::mousePressEvent(QMouseEvent *event)
 {
     if(event->pos().y() <= 35)
@@ -227,3 +314,4 @@ void Auth::mouseReleaseEvent(QMouseEvent *)
 {
     mpos = QPoint(-1, -1);
 }
+
