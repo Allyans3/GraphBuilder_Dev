@@ -10,9 +10,12 @@ Auth::Auth(QWidget *parent) :
     connect(ui->exitbut,&QPushButton::clicked,this,&QWidget::close);
     connect(ui->minimize,&QPushButton::clicked,this,&QWidget::showMinimized);
     connect(ui->back,&QPushButton::clicked,this,[this]{
+        setting(false,50);
         ui->stackedWidget->setCurrentIndex(0);
     });
     this->setWindowIcon(QIcon(":/new/prefix1/logo/logo.ico"));
+
+    ui->back->setVisible(false);
 
     QRegExp re("[\\S]{0,}");
     QRegExp email("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$");
@@ -34,6 +37,7 @@ Auth::Auth(QWidget *parent) :
 
     connect(ui->sign_up,&QPushButton::clicked,this,[this]{
         ui->stackedWidget->setCurrentIndex(2);
+        setting(true,25);
         if(!db.isOpen())
             slotTimer();
     });
@@ -54,6 +58,7 @@ Auth::Auth(QWidget *parent) :
             ui->pass_correcting_2->setText("Correct");
     });
     connect(ui->link_pass,&QPushButton::clicked,this,[this]{
+        setting(true,25);
         ui->stackedWidget->setCurrentIndex(3);
         if(!db.isOpen())
             slotTimer();
@@ -78,11 +83,18 @@ Auth::Auth(QWidget *parent) :
 
 
     db = QSqlDatabase::addDatabase("QMYSQL");
-    db.setHostName("db4free.net");
-    db.setDatabaseName("graphauth");
+    db.setHostName("ricky.heliohost.org");
+    db.setDatabaseName("allyans3_graphauth");
     db.setPort(3306);
-    db.setUserName("allyans");
-    db.setPassword("12345678");
+    db.setUserName("allyans3_auth");
+    db.setPassword("54985754");
+
+//    db.setHostName("db4free.net");
+//    db.setDatabaseName("graphauth");
+//    db.setPort(3306);
+//    db.setUserName("allyans");
+//    db.setPassword("12345678");
+
 //    db.setHostName("remotemysql.com");
 //    db.setDatabaseName("ChL2NiO4hE");
 //    db.setPort(3306);
@@ -91,13 +103,20 @@ Auth::Auth(QWidget *parent) :
     db.setConnectOptions("MYSQL_OPT_RECONNECT=TRUE;MYSQL_OPT_CONNECT_TIMEOUT=1;MYSQL_OPT_WRITE_TIMEOUT=1;MYSQL_OPT_READ_TIMEOUT=1");
     timer = new QTimer();
     connect(timer, &QTimer::timeout, this, &Auth::slotTimer);
-    timer->start(100);
+    timer->start(1);
 }
 
 Auth::~Auth()
 {
     delete timer;
     delete ui;
+}
+
+void Auth::setting(bool stat,int id)
+{
+    ui->back->setVisible(stat);
+    ui->label_2->setMinimumWidth(id);
+    ui->label_2->setMaximumWidth(id);
 }
 
 void Auth::slotTimer()
@@ -135,7 +154,7 @@ void Auth::on_sign_in_clicked()
                             ui->left_entries->setText("You have "+ QString::number(qry.value("Activation").toInt()) + " entries left");
                     ui->status_db->setText("Need activation!");
                     ui->stackedWidget->setCurrentIndex(1);
-
+                    setting(true,25);
                 }
             }
         }
@@ -193,6 +212,7 @@ void Auth::on_register_button_clicked()
                         smtp->sendMail("graphauth@gmail.com", QString(ui->e_mail_reg->text()) , "Successful registration",QString("This is your login information.\r\nLogin: " + ui->login_reg->text()+ "\r\nPassword: " + ui->pass_reg->text() + "\r\nAuthKey: " + QString(QString::number(p1)+"-"+QString::number(p2)+"-"+QString::number(p3)+"-"+QString::number(p4)) + "\r\r"));
                         ui->status_db->setText("You have successfully signed up!");
                         ui->login->setText(QString(ui->login_reg->text()));
+                        setting(false,50);
                         ui->stackedWidget->setCurrentIndex(0);
                     }
                 }
@@ -255,6 +275,7 @@ void Auth::on_button_lost_pass_clicked()
         else if(qry.exec("UPDATE graphauth SET Password=\'" + ui->pass_rec->text() + "\' WHERE E_mail=\'" + ui->e_mail_lost_pass->text() + "\'"))
         {
             ui->status_db->setText("Password successfully recovered.");
+            setting(false,50);
             ui->stackedWidget->setCurrentIndex(0);
         }
     }

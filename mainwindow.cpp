@@ -1,5 +1,6 @@
 ﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent) :
     QWidget(parent),
@@ -244,6 +245,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->back,&QPushButton::clicked,this,[this]{
         ui->stackedWidget->setCurrentIndex(0);
         ui->stackedHeader->setCurrentIndex(0);
+    });
+    connect(ui->save,&QPushButton::clicked,this,[this]{
+        QString fileName= QFileDialog::getSaveFileName(this, "Save image", QCoreApplication::applicationDirPath(), "BMP Files (*.bmp);;JPEG (*.JPEG);;PNG (*.png)" );
+            if (!fileName.isNull())
+            {
+                QPixmap pixMap = this->ui->graph->grab();
+                pixMap.save(fileName);
+            }
     });
 }
 
@@ -526,6 +535,8 @@ void MainWindow::build_ostov()
 
 void MainWindow::editing()
 {
+    if(begin != nullptr)
+        addedge();
     int paral = 0, loop = 0,temp = 0;
     ui->label_node->setText(QString("Nodes: "+QString::number(scene->nodes.size())));
     ui->label_edge->setText(QString("Edges: "+QString::number(scene->edges.size())));

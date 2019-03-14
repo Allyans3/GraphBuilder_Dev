@@ -27,6 +27,8 @@ public:
     ~Auth();
     QPoint mpos = QPoint(-1,-1);
 
+public slots:
+    void setting(bool stat, int id);
 private slots:
     void on_sign_in_clicked();
     void mousePressEvent(QMouseEvent *event);
