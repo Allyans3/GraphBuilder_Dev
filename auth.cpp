@@ -83,23 +83,12 @@ Auth::Auth(QWidget *parent) :
 
 
     db = QSqlDatabase::addDatabase("QMYSQL");
-    db.setHostName("ricky.heliohost.org");
-    db.setDatabaseName("allyans3_graphauth");
+    db.setHostName("remotemysql.com");
+    db.setDatabaseName("ChL2NiO4hE");
     db.setPort(3306);
-    db.setUserName("allyans3_auth");
-    db.setPassword("54985754");
-
-//    db.setHostName("db4free.net");
-//    db.setDatabaseName("graphauth");
-//    db.setPort(3306);
-//    db.setUserName("allyans");
-//    db.setPassword("12345678");
-
-//    db.setHostName("remotemysql.com");
-//    db.setDatabaseName("ChL2NiO4hE");
-//    db.setPort(3306);
-//    db.setUserName("ChL2NiO4hE");
-//    db.setPassword("WSooj0h6o1");
+    db.setUserName("ChL2NiO4hE");
+    db.setPassword("WSooj0h6o1");
+        
     db.setConnectOptions("MYSQL_OPT_RECONNECT=TRUE;MYSQL_OPT_CONNECT_TIMEOUT=1;MYSQL_OPT_WRITE_TIMEOUT=1;MYSQL_OPT_READ_TIMEOUT=1");
     timer = new QTimer();
     connect(timer, &QTimer::timeout, this, &Auth::slotTimer);
